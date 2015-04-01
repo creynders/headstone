@@ -9,8 +9,7 @@ var cli = meow({
     '  headstone <input>',
     '',
     'Example',
-    '  headstone Unicorn'
+    '  headstone disableUsers'
   ].join('\n')
 });
-
-headstone(cli.input[0]);
+headstone(cli.input, cli.flags);
