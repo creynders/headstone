@@ -5,18 +5,24 @@ var konfy = require( "konfy" );
 var path = require( "path" );
 var async = require( "async" );
 var di = require( "asyncdi" );
+var reqmod = require( "require-module" );
+var chalk = require( "chalk" );
 
 function log(){
-  console.log.apply( null, [ "[Headstone]" ].concat( _.toArray( arguments ) ) );
+  var args = _.toArray( arguments );
+  var color = ( _.isFunction( args[ 0 ] ))
+    ? args.shift()
+    : chalk.gray;
+  args = _.map(args, function(arg){
+    return color(arg);
+  });
+  console.log.apply( null, [ chalk.blue( "[Headstone]" ) ].concat( args ) );
 }
 
 function startKeystone( opts ){
-  var localModules = path.join( process.cwd(), "node_modules" );
-  var keystonePath = path.join( localModules, "keystone" );
-  debug( "Starting local keystone:", keystonePath );
-  var keystone = require( keystonePath ); // local
+  debug( "Starting local keystone" );
+  var keystone = reqmod( "keystone", process.cwd() ); // local
   keystone.init( opts.keystone );
-  keystone.mongoose = require( path.join( localModules, "mongoose" ) ); // local
   var mongoUri = opts.mongoUri || process.env.MONGO_URI;
   debug( "Connecting to mongoose URI:", mongoUri );
   keystone.mongoose.connect( mongoUri );
@@ -28,7 +34,7 @@ function processFiles( files,
                        opts ){
   async.eachSeries( files, function( filename,
                                      next ){
-    log( "Processing file:", filename );
+    log( "Processing file:", chalk.green(filename) );
     var resolved = path.resolve( filename );
     var parsed = path.parse( resolved );
     var config;
@@ -38,7 +44,12 @@ function processFiles( files,
       config = {};
     }
     var values = _.defaults( {}, opts, config );
-    var module = require( resolved );
+    var module;
+    try{
+      module = require( resolved );
+    } catch( e ) {
+      return next( new Error( "Cannot find or require module '" + filename + "'" ) );
+    }
     di( module, null, {
       callback : [
         "next",
@@ -49,15 +60,15 @@ function processFiles( files,
       if( err ){
         return next( err );
       } else {
-        log( "Finished processing file:", filename );
+        log( "Finished processing file:", chalk.green(filename) );
         next();
       }
     } );
   }, function( err ){
     if( err ){
-      log( "Error:", err );
+      log( chalk.red, err );
     } else {
-      log( "Finished processing all files" );
+      log( chalk.green, "Finished processing all files" );
     }
     process.nextTick( function(){
       process.exit( 1 );
@@ -70,7 +81,7 @@ module.exports = function headstone( files,
   debug( "files:", files );
   debug( "arguments:", args );
   if( !files || !_.isArray( files ) || files.length <= 0 ){
-    return log( "Error: no files provided" );
+    return log( chalk.red, new Error("no files provided") );
   }
   var opts = _.defaults( {}, args, {
     models     : "./models",
