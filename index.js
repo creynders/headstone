@@ -88,8 +88,7 @@ module.exports = function headstone( files,
     cwd        : process.cwd(),
     configFile : "headstone.json",
     keystone   : {
-      headless      : true,
-      "module root" : process.cwd()
+      headless      : true
     }
   } );
   opts.keystone[ "module root" ] = opts.cwd;
