@@ -102,6 +102,15 @@ There's a number of settings you can pass to `headstone`:
 * `models`: the directory where your models are located, by default this is `./models` relative to your keystone project root.
 * `configFile`: these settings can be stored in a file, called `headstone.json` by default, but if you wish to choose another file name you can supply it here.
 * `mongoUri` or `MONGO_URI`: the URI of your mongoose database
+* `keystone`: (_config file only_) settings you want to pass to the keystone instance. 
+  ```js
+  //default
+  {
+    keystone:{
+      headless:true
+    }
+  }
+  ```
 
 These settings can be passed as command-line arguments, like this:
 
