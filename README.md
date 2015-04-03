@@ -101,6 +101,7 @@ There's a number of settings you can pass to `headstone`:
 * `cwd`: the directory you want to use as a current working directory.
 * `models`: the directory where your models are located, by default this is `./models` relative to your keystone project root.
 * `configFile`: these settings can be stored in a file, called `headstone.json` by default, but if you wish to choose another file name you can supply it here.
+* `mongoUri` or `MONGO_URI`: the URI of your mongoose database
 
 These settings can be passed as command-line arguments, like this:
 
@@ -122,7 +123,7 @@ Command line arguments _always_ trump configuration file values.
 ## environment variables
 
 `headstone` automatically reads the environment declaration you've already created for your keystone project in a `.env` file.
-It uses the `MONGO_URI` variable to connect to your mongoose database.
+It uses the `MONGO_URI` variable to connect to your mongoose database (unless overridden by a corresponding command line argument or `headstone` file setting)
 
 ## processing multiple files
 
