@@ -13,9 +13,9 @@ function log(){
   var color = ( _.isFunction( args[ 0 ] ))
     ? args.shift()
     : chalk.gray;
-  args = _.map(args, function(arg){
-    return color(arg);
-  });
+  args = _.map( args, function( arg ){
+    return color( arg );
+  } );
   console.log.apply( null, [ chalk.blue( "[Headstone]" ) ].concat( args ) );
 }
 
@@ -34,8 +34,9 @@ function processFiles( files,
                        opts ){
   async.eachSeries( files, function( filename,
                                      next ){
-    log( "Processing file:", chalk.green(filename) );
+    log( "Processing file:", chalk.green( filename ) );
     var resolved = path.resolve( filename );
+    debug( "Resolved path to script:", resolved );
     var parsed = path.parse( resolved );
     var config;
     try{
@@ -48,10 +49,10 @@ function processFiles( files,
     try{
       module = require( resolved );
     } catch( e ) {
-      return next( new Error( "Cannot find or require module '" + filename + "'" ) );
+      return next( new Error( "An error occurred when requiring '" + filename + "': "+ err.message ) );
     }
     di( module, null, {
-      callback : [
+      callback: [
         "next",
         "callback",
         "done"
@@ -60,7 +61,7 @@ function processFiles( files,
       if( err ){
         return next( err );
       } else {
-        log( "Finished processing file:", chalk.green(filename) );
+        log( "Finished processing file:", chalk.green( filename ) );
         next();
       }
     } );
@@ -81,14 +82,14 @@ module.exports = function headstone( files,
   debug( "files:", files );
   debug( "arguments:", args );
   if( !files || !_.isArray( files ) || files.length <= 0 ){
-    return log( chalk.red, new Error("no files provided") );
+    return log( chalk.red, new Error( "no files provided" ) );
   }
   var opts = _.defaults( {}, args, {
-    models     : "./models",
-    cwd        : process.cwd(),
-    configFile : "headstone.json",
-    keystone   : {
-      headless      : true
+    models: "./models",
+    cwd: process.cwd(),
+    configFile: "headstone.json",
+    keystone: {
+      headless: true
     }
   } );
   opts.keystone[ "module root" ] = opts.cwd;
@@ -99,5 +100,5 @@ module.exports = function headstone( files,
   opts = _.defaults( opts.config, _.omit( opts, "config" ) ); // flatten
 
   startKeystone( opts );
-  processFiles( files );
+  processFiles( files, opts );
 };
