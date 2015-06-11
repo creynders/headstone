@@ -48,7 +48,7 @@ function processFiles( files,
     var module;
     try{
       module = require( resolved );
-    } catch( e ) {
+    } catch( err ) {
       return next( new Error( "An error occurred when requiring '" + filename + "': "+ err.message ) );
     }
     di( module, null, {
