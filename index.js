@@ -49,7 +49,7 @@ function processFiles( files,
     try{
       module = require( resolved );
     } catch( e ) {
-      return next( new Error( "An error occurred when requiring '" + filename + "': "+ err.message ) );
+      return next( new Error( "An error occurred when requiring '" + filename + "': "+ e.message ) );
     }
     di( module, null, {
       callback: [
