@@ -31,5 +31,8 @@
   },
   "bin": {
     "headstone": "cli.js"
+  },
+  "engines": {
+    "node": ">=0.12.0"
   }
 }
