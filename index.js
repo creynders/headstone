@@ -22,10 +22,14 @@ function log(){
 function startKeystone( opts ){
   debug( "Starting local keystone" );
   var keystone = reqmod( "keystone", process.cwd() ); // local
+  if( opts.mongoose && _.isString( opts.mongoose ) ){
+    opts.keystone.mongoose = require( path.join( process.cwd(), opts.mongoose ) );
+  }
   keystone.init( opts.keystone );
   var mongoUri = opts.mongoUri || process.env.MONGO_URI;
-  debug( "Connecting to mongoose URI:", mongoUri );
-  keystone.mongoose.connect( mongoUri );
+  var mongoose = keystone.get( 'mongoose' ) || keystone.mongoose;
+  debug( "Connecting to", mongoUri || "<default mongo URIq>", "with mongoose", "v" + mongoose.version );
+  mongoose.connect( mongoUri );
   debug( "Importing models:", path.join( opts.keystone[ "module root" ], opts.models ) );
   keystone.import( opts.models );
 }
@@ -49,7 +53,7 @@ function processFiles( files,
     try{
       module = require( resolved );
     } catch( err ) {
-      return next( new Error( "An error occurred when requiring '" + filename + "': "+ err.message ) );
+      return next( new Error( "An error occurred when requiring '" + filename + "': " + err.message ) );
     }
     di( module, null, {
       callback: [
@@ -84,7 +88,7 @@ module.exports = function headstone( files,
   if( !files || !_.isArray( files ) || files.length <= 0 ){
     return log( chalk.red, new Error( "no files provided" ) );
   }
-  var opts = _.defaults( {}, args, {
+  var opts = _.defaultsDeep( {}, args, {
     models: "./models",
     cwd: process.cwd(),
     configFile: "headstone.json",
@@ -97,7 +101,7 @@ module.exports = function headstone( files,
   debug( "setting cwd:", opts.cwd );
   process.chdir( opts.cwd );
   opts = konfy.load( opts );
-  opts = _.defaults( opts.config, _.omit( opts, "config" ) ); // flatten
+  opts = _.defaultsDeep( opts.config, _.omit( opts, "config" ) ); // flatten
 
   startKeystone( opts );
   processFiles( files, opts );
