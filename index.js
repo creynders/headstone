@@ -28,7 +28,7 @@ function startKeystone( opts ){
   keystone.init( opts.keystone );
   var mongoUri = opts.mongoUri || process.env.MONGO_URI;
   var mongoose = keystone.get( 'mongoose' ) || keystone.mongoose;
-  debug( "Connecting to", mongoUri || "<default mongo URIq>", "with mongoose", "v" + mongoose.version );
+  debug( "Connecting to", mongoUri || "<default mongo URI>", "with mongoose", "v" + mongoose.version );
   mongoose.connect( mongoUri );
   debug( "Importing models:", path.join( opts.keystone[ "module root" ], opts.models ) );
   keystone.import( opts.models );
