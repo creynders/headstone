@@ -6,7 +6,7 @@ var headstone = require( './' );
 var cli = meow( {
   help: [
     'Usage:',
-    '  headstone <file> [--cwd=<path>] [--models=<path>] [--configFile=<file>] [--mongoUri=<uri>]',
+    '  headstone <file> [--cwd=<path>] [--models=<path>] [--modelsRequire] [--configFile=<file>] [--mongoUri=<uri>]',
     '',
     'Example',
     '  headstone scripts/disableUsers --models=./app/models --mongoUri=mongodb://localhost/myDb'

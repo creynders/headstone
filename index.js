@@ -31,7 +31,11 @@ function startKeystone( opts ){
   debug( "Connecting to", mongoUri || "<default mongo URI>", "with mongoose", "v" + mongoose.version );
   mongoose.connect( mongoUri );
   debug( "Importing models:", path.join( opts.keystone[ "module root" ], opts.models ) );
-  keystone.import( opts.models );
+  if (opts.modelsRequire) {
+    reqmod( opts.models, process.cwd() );
+  } else {
+    keystone.import( opts.models );
+  }
 }
 
 function processFiles( files,
